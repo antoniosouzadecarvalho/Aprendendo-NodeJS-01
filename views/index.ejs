@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Nomes</h1>
+<hr>
+<table>
+    <thead>
+        <th>IdName</th>
+        <th>Name</th>
+        <th colspan="2">Opções</th>
+    </thead>
+    <tbody>
+        <% names.forEach( name => {%>
+
+            <tr>
+                <td> <%= name.id %></td>
+                <td> <%= name.name %></td>
+                <td><a href="/update/<%= name.id %>">Atualizar</a></td>
+                <td><a href="/delete/<%= name.id %>">Deletar</a></td>
+            </tr>
+            
+        <% }) %>
+    </tbody>
+</table>
+</body>
+</html>
