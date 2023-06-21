@@ -1,16 +1,16 @@
-// Express
+//Express
 const express = require("express");
 const app = express();
 
 //body-parser
 const bodyParser = require("body-parser");
 
-//Conexão com o banco de dados
-const connection = require("./database/database");
+//Modulo database (./database/dabase.js);
+const conexao = require("./database/database");
 
 
-//Teste conexão com DB
-connection
+//Teste conexão com DB mysql
+conexao
     .authenticate()
     .then(() => {
         console.log("Conectado com sucesso!")
@@ -19,6 +19,8 @@ connection
         console.log(err)
     })
 
+//Modulo Nomes (./database/Nomes.js)
+const Nomes = require("./database/Nomes");
 
 // Configurando EJS no express
 app.set("view engine", "ejs");
@@ -27,46 +29,46 @@ app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
-//Models DB
-const Names = require("./database/Names");
 
 
-
-// Rota raiz
+// EndPoint: Página raiz (EXIBIR NOMES)
 app.get("/", (req, res) => {
-    Names.findAll({raw: true})
+    Nomes.findAll({raw: true})
         .then(dados => {
-            res.render("index", {names: dados});
+            res.render("index", {nomes: dados});
         })
         .catch(err => {
             console.log(err);
         })
 });
 
+// EndPoint: Página formúlario
 app.get("/form", (req, res) => {
     res.render("form");
-})
+});
 
+// EndPoint: Capturar NOME e persistir no DB
 app.post("/dados", (req, res) => {
     const name = req.body.name;
     
     if(name == undefined){
         res.json({err: "Dados invalido!"});
     }else {
-        Names.create({name: name})
+        Nomes.create({name: name})
             .then(res => {
                 res.redirect("/");  
             })
     }
 
 })
-//Rota: Pagina Update
+
+// EndPoint: Capturar ID e retorna Nome
 app.get("/update/:id", (req, res) => {
     let idChar = req.params.id;
     let id = parseInt(idChar)
     
     if(!isNaN(id)){
-        Names.findOne({ raw: true },{
+        Nomes.findOne({ raw: true },{
             where: {id: id}
         })
         .then( resulht => {
@@ -77,13 +79,13 @@ app.get("/update/:id", (req, res) => {
     }
 });
 
-//Rota: Novo nome
+// EndPoint: Capturar ID, NOVO NOME e Atualizar NOME no DB 
 app.post("/newName", (req, res) => {
     let id = req.body.id;
     let name = req.body.name;
     console.log(id)
 
-    Names.update({name: name}, {
+    Nomes.update({name: name}, {
         where: {id: id}
     })
     .then(() => {
@@ -94,11 +96,11 @@ app.post("/newName", (req, res) => {
     })
 });
 
-//Rote: Deletar name
+// EndPoint: Capturar ID e REMOVER NOME no DB
 app.get("/delete/:id", (req, res) => {
     let id = req.params.id;
 
-    Names.destroy({
+    Nomes.destroy({
         where: {id: id}
     })
     .then(() => {
@@ -108,8 +110,6 @@ app.get("/delete/:id", (req, res) => {
         console.log(err)
     })
 })
-
-
 
 
 
